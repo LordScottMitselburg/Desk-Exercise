@@ -27,11 +27,10 @@ export const calculateDeskLayout = (people: Person[]): Person[] => {
     return teamA.localeCompare(teamB);
   });
 
-  return people = sortPeopleByDogStatusWithinTeam(people);
+  return (people = sortPeopleByDogStatusWithinTeam(people));
 };
 
 const sortPeopleByDogStatusWithinTeam = (people: Person[]): Person[] => {
-
   const teamsMap: Record<string, Person[]> = {};
 
   // push each team into a separate key to allow sorting the DogStatus within a team alot easier.
@@ -52,7 +51,6 @@ const sortPeopleByDogStatusWithinTeam = (people: Person[]): Person[] => {
     const teamMembers = teamsMap[teamId];
 
     const sortedTeam = teamMembers.sort((a, b) => {
-
       // give each DogStatus a number value to allow for sorting. with the sort order as follows. HAVE < LIKE < AVOID
       const order: Record<DogStatus, number> = {
         HAVE: 0,

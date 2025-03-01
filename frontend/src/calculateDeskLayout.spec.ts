@@ -131,7 +131,7 @@ describe('test checkOrder function', () => {
   });
 });
 
-describe.skip('calculateDeskLayout', () => {
+describe('calculateDeskLayout', () => {
   it('single team no dogs order not important', () => {
     const people = [
       person('1', DogStatus.Like),
