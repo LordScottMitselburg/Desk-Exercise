@@ -12,6 +12,12 @@ type Person = PeopleQuery['people'][0];
  * This test suite may not exhaustive for all edge cases.
  */
 export const calculateDeskLayout = (people: Person[]): Person[] => {
+  const peopleSortedByTeam = sortPeopleIntoTeams(people);
+
+  return sortPeopleByDogStatusWithinTeam(peopleSortedByTeam);
+};
+
+const sortPeopleIntoTeams = (people: Person[]): Person[] => {
   // Sort people by team so teams are together.
   people.sort((a, b) => {
     // check for null | undefined teams and give them the value of '', allows for comparing to be easier.
@@ -27,27 +33,27 @@ export const calculateDeskLayout = (people: Person[]): Person[] => {
     return teamA.localeCompare(teamB);
   });
 
-  return (people = sortPeopleByDogStatusWithinTeam(people));
+  return people;
 };
 
 const sortPeopleByDogStatusWithinTeam = (people: Person[]): Person[] => {
   const teamsMap: Record<string, Person[]> = {};
 
   // push each team into a separate key to allow sorting the DogStatus within a team alot easier.
-  people.forEach((person) => {
+  for (const person of people) {
     if (person.team) {
       if (!teamsMap[person.team.id]) {
         teamsMap[person.team.id] = [];
       }
       teamsMap[person.team.id].push(person);
     }
-  });
+  }
 
   // array that will get passed back with the sorted teams, sorted by DogStatus.
   const sortedTeams: Person[] = [];
 
   // use the key given to each unique team to sort the DogStatus within that team.
-  Object.keys(teamsMap).forEach((teamId) => {
+  for (const teamId in teamsMap) {
     const teamMembers = teamsMap[teamId];
 
     const sortedTeam = teamMembers.sort((a, b) => {
@@ -63,7 +69,7 @@ const sortPeopleByDogStatusWithinTeam = (people: Person[]): Person[] => {
 
     // push the sorted team into the array that will be returned.
     sortedTeams.push(...sortedTeam);
-  });
+  }
 
   return sortedTeams;
 };
