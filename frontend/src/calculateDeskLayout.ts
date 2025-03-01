@@ -1,4 +1,4 @@
-import type { PeopleQuery } from './generated/graphql';
+import type { DogStatus, PeopleQuery } from './generated/graphql';
 
 type Person = PeopleQuery['people'][0];
 
@@ -12,24 +12,60 @@ type Person = PeopleQuery['people'][0];
  * This test suite may not exhaustive for all edge cases.
  */
 export const calculateDeskLayout = (people: Person[]): Person[] => {
-
   // Sort people by team so teams are together.
   people.sort((a, b) => {
     // check for null | undefined teams and give them the value of '', allows for comparing to be easier.
-    const teamA = a.team?.id ?? "";
-    const teamB = b.team?.id ?? "";
+    const teamA = a.team?.id ?? '';
+    const teamB = b.team?.id ?? '';
 
     // if team id's are the same, leave them in current postion.
     if (teamA === teamB) {
-        return 0;
+      return 0;
     }
 
     // if team id's are different, sort alphabetically by team id.
     return teamA.localeCompare(teamB);
-});
+  });
 
+  return people = sortPeopleByDogStatusWithinTeam(people);
+};
 
+const sortPeopleByDogStatusWithinTeam = (people: Person[]): Person[] => {
 
+  const teamsMap: Record<string, Person[]> = {};
 
-  return people;
+  // push each team into a separate key to allow sorting the DogStatus within a team alot easier.
+  people.forEach((person) => {
+    if (person.team) {
+      if (!teamsMap[person.team.id]) {
+        teamsMap[person.team.id] = [];
+      }
+      teamsMap[person.team.id].push(person);
+    }
+  });
+
+  // array that will get passed back with the sorted teams, sorted by DogStatus.
+  const sortedTeams: Person[] = [];
+
+  // use the key given to each unique team to sort the DogStatus within that team.
+  Object.keys(teamsMap).forEach((teamId) => {
+    const teamMembers = teamsMap[teamId];
+
+    const sortedTeam = teamMembers.sort((a, b) => {
+
+      // give each DogStatus a number value to allow for sorting. with the sort order as follows. HAVE < LIKE < AVOID
+      const order: Record<DogStatus, number> = {
+        HAVE: 0,
+        LIKE: 1,
+        AVOID: 2,
+      };
+
+      return order[a.dogStatus] - order[b.dogStatus];
+    });
+
+    // push the sorted team into the array that will be returned.
+    sortedTeams.push(...sortedTeam);
+  });
+
+  return sortedTeams;
 };
