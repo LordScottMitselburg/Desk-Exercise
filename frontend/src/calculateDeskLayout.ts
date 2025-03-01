@@ -12,6 +12,24 @@ type Person = PeopleQuery['people'][0];
  * This test suite may not exhaustive for all edge cases.
  */
 export const calculateDeskLayout = (people: Person[]): Person[] => {
-  //TODO: implement the desk layout algorithm
+
+  // Sort people by team so teams are together.
+  people.sort((a, b) => {
+    // check for null | undefined teams and give them the value of '', allows for comparing to be easier.
+    const teamA = a.team?.id ?? "";
+    const teamB = b.team?.id ?? "";
+
+    // if team id's are the same, leave them in current postion.
+    if (teamA === teamB) {
+        return 0;
+    }
+
+    // if team id's are different, sort alphabetically by team id.
+    return teamA.localeCompare(teamB);
+});
+
+
+
+
   return people;
 };
